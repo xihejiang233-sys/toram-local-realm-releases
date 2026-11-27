@@ -2,7 +2,20 @@
 
 Toram Local Realm 让 Steam 版《托拉姆物语》在本机运行单人地图，角色进度保存在本机。支持 Windows 10/11，使用系统自带的 Windows PowerShell 5.1，无需另装运行依赖。请先安装 Steam 版游戏。
 
-[下载 r1 ZIP](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/download/r1/ToramLocalRealm-Windows-LocalPlay-AllInOne-r1.zip) · [GitHub Release](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/tag/r1) · [羽毛杯备用下载页](https://feathercup.pages.dev/downloads)
+[下载 r2 ZIP](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/download/r2/ToramLocalRealm-Windows-LocalPlay-AllInOne-r2.zip) · [GitHub Release](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/tag/r2) · [羽毛杯备用下载页](https://feathercup.pages.dev/downloads)
+
+## r2 更新
+
+- Clash Verge 自定义安装路径可从用户界面进程发现核心。服务模式读不到核心路径时，由已连接的 Mihomo 控制器校验并加载临时路由，无需为离线检查提权。
+- 内置 7,059 条物品索引，其中 549 条为锻晶或萃取道具。支持按 ID、繁简名称查询，并返回属性、强化前置和发放命令。详见包内 `ITEM_LOOKUP.zh-CN.md`。
+
+```powershell
+.\admin\ToramLocalAdmin.ps1 -Command Search-ToramItems -Query '迪亚克' -Kind crysta -Json
+```
+
+迪亚克 `9739` 的前置为寄生甲兽 `9976`，词条为 MATK +8%、魔法贯穿 +20%、咏唱速度 -16%。
+
+[单独下载锻晶表](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/download/r2/crysta-catalog.zh.json) · [下载 SHA-256 校验文件](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/download/r2/ToramLocalRealm-Windows-LocalPlay-AllInOne-r2.zip.sha256)
 
 ## 三步快速上手
 
@@ -34,10 +47,10 @@ Toram Local Realm 让 Steam 版《托拉姆物语》在本机运行单人地图�
 
 ## SHA-256 校验
 
-ZIP 大小为 **2,739,341 字节**，内含 283 个文件。SHA-256 为 `c9e846179faa753166c9df38fa347d95b38f0b1025a231480a08bf4911e885b6`。
+ZIP 大小为 **2,971,437 字节**，内含 286 个文件。SHA-256 为 `9af1a8aec44a09c44eee9dbd6c2d04bf7ffe76af5ee9ae09e8079cf583cea04c`。
 
 在下载目录运行以下命令，核对输出的 Hash。
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\ToramLocalRealm-Windows-LocalPlay-AllInOne-r1.zip
+Get-FileHash -Algorithm SHA256 .\ToramLocalRealm-Windows-LocalPlay-AllInOne-r2.zip
 ```
