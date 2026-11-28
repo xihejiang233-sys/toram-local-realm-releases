@@ -1,56 +1,33 @@
 # 托拉姆物语本地世界 · Windows 单机包
 
-Toram Local Realm 让 Steam 版《托拉姆物语》在本机运行单人地图，角色进度保存在本机。支持 Windows 10/11，使用系统自带的 Windows PowerShell 5.1，无需另装运行依赖。请先安装 Steam 版游戏。
+**r3（纯 C# 单文件整合包 · Win64）** 让 Steam 版《托拉姆物语》进入由本机服务端运行的单人地图，角色进度保存在本机。服务端为 .NET 8 自包含单文件 EXE，支持 Windows 10/11 x64，无需另装 .NET、PowerShell 7 或 Python。使用 Steam 客户端前请先安装游戏和 Clash Verge。
 
-[下载 r2 ZIP](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/download/r2/ToramLocalRealm-Windows-LocalPlay-AllInOne-r2.zip) · [GitHub Release](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/tag/r2) · [羽毛杯备用下载页](https://feathercup.pages.dev/downloads)
-
-## r2 更新
-
-- Clash Verge 自定义安装路径可从用户界面进程发现核心。服务模式读不到核心路径时，由已连接的 Mihomo 控制器校验并加载临时路由，无需为离线检查提权。
-- 内置 7,059 条物品索引，其中 549 条为锻晶或萃取道具。支持按 ID、繁简名称查询，并返回属性、强化前置和发放命令。详见包内 `ITEM_LOOKUP.zh-CN.md`。
-
-```powershell
-.\admin\ToramLocalAdmin.ps1 -Command Search-ToramItems -Query '迪亚克' -Kind crysta -Json
-```
-
-迪亚克 `9739` 的前置为寄生甲兽 `9976`，词条为 MATK +8%、魔法贯穿 +20%、咏唱速度 -16%。
-
-[单独下载锻晶表](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/download/r2/crysta-catalog.zh.json) · [下载 SHA-256 校验文件](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/download/r2/ToramLocalRealm-Windows-LocalPlay-AllInOne-r2.zip.sha256)
+[下载 r3 ZIP](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/download/r3/ToramLocalRealm-CSharp-Win64-AllInOne.zip) · [GitHub Release](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/tag/r3) · [羽毛杯下载页](https://feathercup.pages.dev/downloads) · [r2 历史版本（PowerShell）](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/tag/r2)
 
 ## 三步快速上手
 
-1. 下载 ZIP，完整解压到可写目录。
-2. 双击 `Play-LocalRealm.cmd`，选 **[1] 自动启动**。如有 UAC 提示，确认后继续。如 Clash Verge 提示应用临时规则，输入 `y`。等待出现 `REALM_READY`。
-3. 从 Steam 打开《托拉姆物语》，照常登录并进入地图。登录连接官方服务器，地图和本地存档由本机服务端处理。
+先把 ZIP 完整解压到可写目录。启用 Clash Verge 的 Rule（规则）模式，并让 TUN 接收游戏 UDP。
 
-## 三种连接模式
+1. 双击 `2-启动本地服(自动接入Clash路由与中继).cmd`，等待服务就绪，再从 Steam 启动游戏并照常登录。启动器将指定世界端点的 UDP 流量接入本机 `38180` SOCKS5 UDP 中继。登录和认证继续沿用原代理规则，挂载与恢复时核对并保留 Selector 选中项。
+2. 双击 `3-打开GM控制台与中文物品速查.cmd`，浏览器会打开 `http://127.0.0.1:38181/`。内置 7,059 条物品索引，支持按 ID 或繁简中文名称查询物品与锻晶。需要管理权限的操作使用启动窗口显示的本机 GM 令牌。
+3. 退出游戏后双击 `4-恢复官服路由并停止服务.cmd`。路由恢复后，可再次从 Steam 打开官服。
 
-| 网络环境 | 启动方式 |
-| --- | --- |
-| 系统 hosts | 普通网络选 **[1] 自动启动**。启动器临时将地图域名指向本机。 |
-| Clash Verge TUN | 保持 TUN 开启并选 **[1] 自动启动**。启动器通过临时规则把地图连接送到本机 SOCKS5 UDP 中继，登录沿用现有代理规则。 |
-| 手动代理 | FlClash 等客户端选 **[3]**，也可运行 `Start-ServerWithRelayOnly.cmd`。看到 `RELAY_ONLY_READY` 后，按包内 `README.zh-CN.md` 将 `config/clash-manual-snippet.yaml` 中的地图规则合并到代理配置，核对中继端口并启用 SOCKS5 UDP 转发。 |
+## 存档迁移与世界端点
 
-## 停服并切回官服
+先停服并备份 r2。在 r3 第一次启动前，将旧包的 `profiles/*.json` 复制到新包的 `profiles/`，包含已有的 `active-profile.json`。保留旧包以便回退。
 
-先退出游戏，在启动器选 **[2]**，或双击 `Stop-LocalServer.cmd`。自动启动模式会恢复官服路由。若只需恢复自动路由，可运行 `Restore-OfficialRoute.cmd`。手动代理模式需在代理客户端禁用或移除本次添加的规则。完成后从 Steam 重新打开游戏。
+默认世界域名为 `tgs02/21/30/31.toram.jp`。如果实际分配到其他已确认的世界服，例如 `tgs37.toram.jp`，在 `config/realm-settings.json` 中把 `additionalWorldEndpoints` 设为 `["tgs37.toram.jp"]`，保存后重启本地服。
 
-## 三套内置存档
+## Steam 实机记录
 
-停服后在菜单选 **[4]**。选中存档后按 `S` 切换，按 `R` 并确认则重置所选存档。
+Round 7 使用 Steam `v2.2.8s`。两次登录均为 0 次重连，单次普攻击中结算实测 4.7831 ms（< 5 ms），连续 12 次普攻各回复 39 MP（+39 AMPR）。跨图、冷重启读档和 Clash 路由恢复已验证。GM 发放的道具在跨图和重登后可从客户端背包看到，Lv174 Boss 的客户端显示和 Orb Shop 余额显示仍待验证。
 
-| 存档 | 初始状态 |
-| --- | --- |
-| `starter` | Lv1 法杖角色，从洛库库平原开始，首次启动默认选中。 |
-| `explorer-lv27` | Lv27 单手剑角色，从迈巴罗森林开始，可探索森林狼入口。 |
-| `demo-lv160` | Lv160 演示角色，从洛库库平原开始，可体验高级装备和技能。 |
+## 文件校验
 
-## SHA-256 校验
-
-ZIP 大小为 **2,971,437 字节**，内含 286 个文件。SHA-256 为 `9af1a8aec44a09c44eee9dbd6c2d04bf7ffe76af5ee9ae09e8079cf583cea04c`。
-
-在下载目录运行以下命令，核对输出的 Hash。
+ZIP 共 21 个文件，大小为 **44,094,670 字节**。SHA-256 为 `c5cd523d0a0735511fd279528053e042a9234582ae9dde69e1f28d45337b5c5d`。
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\ToramLocalRealm-Windows-LocalPlay-AllInOne-r2.zip
+Get-FileHash -Algorithm SHA256 .\ToramLocalRealm-CSharp-Win64-AllInOne.zip
 ```
+
+[SHA-256 校验文件](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/download/r3/ToramLocalRealm-CSharp-Win64-AllInOne.zip.sha256) · [包内文件清单](https://github.com/xihejiang233-sys/toram-local-realm-releases/releases/download/r3/PACKAGE-MANIFEST.json)
